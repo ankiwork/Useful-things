@@ -1,0 +1,38 @@
+#include <iostream>
+#include <cstdlib>
+ 
+struct Something {
+    int integer;
+    double floating;
+};
+ 
+int main() {
+ 
+    // мне кажется, что вот так красивее всего,
+    // да и товарищ Бьёрн предлагает делать через new style cast
+    // для unchecked type conversion (https://www.stroustrup.com/bs_faq2.html#void-ptr)
+    Something *something = static_cast<Something*>(std::malloc(sizeof(*something)));
+ 
+    // судя по гитхабу, очень распространённый вариант через си-каст.
+    // видимо, поскольку malloc возвращает указатель на воит, а использвание С++ 
+    // кастов не имеет смысла по отношению к указателю на воид,
+    // кроме красивостей, достаточно "си-каста":
+    //Something *something = (Something*)std::malloc(sizeof(*something));
+ 
+    // маллок не бросается исключениями и надо проверять, что результат выделения памяти не нулл
+    if (something == nullptr) {
+        std::cerr << "Failed to allocate memory." << std::endl;
+        return 1;
+    }
+ 
+    // ну а дальше можно работать как с любой неинициализированной структурой
+    std::cout << "Allocated " << sizeof(*something) << " bytes.\n"
+              << "Garbage values are " << something->integer << " and " << something->floating << std::endl;
+ 
+    // не забыть освободить память, выдаленную функцией malloc с помощью функции free.
+    // не надо скрещивать струи: malloc -> free,  new -> delete.
+    std::free(something);
+    std::cout << "Deallocated memory." << std::endl;
+ 
+    return 0;
+}
