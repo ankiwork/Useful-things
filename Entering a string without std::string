@@ -1,0 +1,11 @@
+void clear_buffer(void) {
+    fseek(stdin, 0, SEEK_END);
+}
+
+void input_string(char* dest, const char* msg) {
+    cout << msg;
+    clear_buffer();
+    char buff[BUFFER_SIZE] = { };
+    fgets(buff, BUFFER_SIZE, stdin);
+    strcpy_s(dest, sizeof(buff), buff);
+}
